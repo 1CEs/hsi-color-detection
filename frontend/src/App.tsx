@@ -3,20 +3,21 @@ import CardHeader from "./components/card/card-header"
 import logo from './assets/logo.png'
 import CardBody from "./components/card/card-body"
 import Input from "./components/input"
-import { ChangeEvent, HTMLAttributes } from "react"
+import { ChangeEvent, HTMLAttributes, useEffect } from "react"
 import Button from "./components/button"
-import { ChromePicker } from "react-color"
 import { useState } from "react"
 import { MynauiImageSolid, NotoCrossMark } from "./components/icon"
+import { cvtHSI_RGB } from "./utils/convert"
+import convert from "color-convert"
 
 function App() {
   const [color, setColor] = useState<string>("")
-  const [isPopup, setIsPopup] = useState<boolean>(false)
+  const [rgb, setRGB] = useState<RGBColor | null>()
   const [inputImage, setInputImage] = useState<string | null>(null)
   const [imageName, setImageName] = useState<string | null>(null)
   const [hsi, setHSI] = useState<HSIColor>({
     h: Math.floor(Math.random() * 360),
-    s: Math.random(),
+    s: parseFloat(Math.random().toFixed(2)),
     i: Math.floor(Math.random() * 255)
   })
   const [hsl, setHSL] = useState<HSLColor>({
@@ -53,20 +54,21 @@ function App() {
       placeholder: "0 - 360",
       range: {
         min: "0",
-        max: "360",
+        max: "359",
         name: "range-h"
       },
-      boxCSS: "bg-hue-gradient"
+      boxcss: "bg-hue-gradient"
     },
     {
       name: "s",
       placeholder: "0 - 1",
       range: {
+        step: 0.01,
         min: "0",
         max: "1",
         name: "range-s"
       },
-      boxCSS: `linear-gradient(to right, hsl(0, 0%, 50%), hsl(${hsl.h}, ${hsl.s * 100}%, 50%))`
+      boxcss: `linear-gradient(to right, hsl(0, 0%, 50%), hsl(${hsl.h}, 50%, 50%))`
     },
     {
       name: "i",
@@ -76,29 +78,27 @@ function App() {
         max: "255",
         name: "range-i"
       },
-      boxCSS: `linear-gradient(to right, hsl(0, ${hsl.s * 100}%, 0%), hsl(${hsl.h}, ${hsl.s * 100}%, 100%))`
+      boxcss: `linear-gradient(to right, hsl(0, ${hsl.s * 100}%, 0%), hsl(${hsl.h}, 50%, 100%))`
     },
   ]
-
-  const cvtHSI_RGB = (hsi: HSIColor) => {
-    
-  }
-
-  const cvtHSI = (hsi: HSIColor) => {
-    setHSL({
-      h: hsi.h,
-      l: hsi.i * ((1 + hsi.s) / 2),
-      s: hsi.i * ((1 + hsi.s) / 2) > 0 ? (hsi.s * hsi.i) / hsi.i * ((1 + hsi.s) / 2) : 0
-    })
-  }
 
   const onHSIValueChange = (e: ChangeEvent<HTMLInputElement>, name: "h" | "s" | "i") => {
     setHSI((prev) => ({
       ...prev,
       [name]: e.target.value == "" ? 0 : name === "s" ? parseFloat(e.target.value) : parseInt(e.target.value, 10),
     }))
-    cvtHSI(hsi)
+    //console.log(hsi)
   }
+
+  useEffect(() => {
+    setRGB(cvtHSI_RGB(hsi))
+    if(rgb) {
+      const hsl = convert.rgb.hsl(rgb.r, rgb.g, rgb.b)
+      setHSL({h: hsl[0], s: hsl[1], l: hsl[2]})
+      console.log(hsl)
+    }
+    
+  }, [hsi])
 
   return (
     <div className="w-screen h-screen flex flex-col gap-y-6 justify-center items-center">
@@ -127,17 +127,16 @@ function App() {
                       </div>
                       <div className="flex flex-col gap-y-5">
                         <Input
-                          className="w-full h-3 p-0"
-                          step={attr.name == "s" ? 0.1 : 1}
+                          className="w-full h-4"
                           onChange={(e) => onHSIValueChange(e, attr.name as keyof typeof hsi)}
                           value={hsi[attr.name as keyof typeof hsi]}
                           {...attr.range}
                           type="range"
                         />
                         <div
-                          className={`h-5 ${attr.name == "h" && attr.boxCSS}`}
+                          className={`h-5 ${attr.name == "h" && attr.boxcss}`}
                           style={{
-                            background: attr.name == "h" ? "" : attr.boxCSS
+                            background: attr.name == "h" ? "" : attr.boxcss
                           }}
                         >
 
@@ -152,9 +151,9 @@ function App() {
             </form>
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-x-3">
-                <div className="w-5 h-5 " style={{ background: `hsl(${hsl.h}, ${hsl.s * 100}%, ${hsl.l}%)` }}>
+                <div className="w-5 h-5 " style={{ backgroundColor: `rgb(${rgb?.r}, ${rgb?.g}, ${rgb?.b})` }}>
                 </div>
-                <label>HSL: ({hsl.h}, {hsl.s}%, {hsl.l}%)</label>
+                { rgb && <label>RGB: ({rgb.r > 255 ? 255 : rgb.r}, {rgb.g > 255 ? 255 : rgb.g}, {rgb.b > 255 ? 255 : rgb.b})</label>}
               </div>
               <div className="flex gap-x-3">
                 <Input className="opacity-0" type="color" id="color_picker" />

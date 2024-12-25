@@ -9,3 +9,9 @@ type HSLColor = {
     s: number,
     l: number
 }
+
+type RGBColor = {
+    r: number,
+    g: number,
+    b: number
+}
