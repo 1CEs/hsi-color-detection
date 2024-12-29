@@ -1,9 +1,9 @@
-import React, { InputHTMLAttributes } from 'react'
+import { InputHTMLAttributes, forwardRef } from 'react';
 
-type InputProps = InputHTMLAttributes<HTMLInputElement>
+type InputProps = InputHTMLAttributes<HTMLInputElement>;
 
-const Input:React.FC<InputProps> = ({ className, ...props}) => {
-  return <input {...props} className={`rounded-md bg-gray-950 ${className}`}/>
-}
+const Input = forwardRef<HTMLInputElement, InputProps>(({ className, ...props }, ref) => {
+  return <input ref={ref} {...props} className={`rounded-md bg-gray-950 ${className}`} />;
+});
 
-export default Input
+export default Input;

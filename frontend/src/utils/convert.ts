@@ -1,39 +1,34 @@
-export const cvtHSI_RGB = (hsi: HSIColor): RGBColor => {
-    let h = hsi.h * Math.PI / 180
-    const s = hsi.s
-    const i = hsi.i / 255
-    const PI = Math.PI
-
-    if (h < ((2 * PI) / 3)) {
-        const { x, y, z } = calXYZ({ h, s, i })
-        return {
-            r: y,
-            g: z,
-            b: x
-        }
-    } else if (h < ((4 * PI) / 3)) {
-        h = h - ((2 * PI) / 3)
-        const { x, y, z } = calXYZ({ h, s, i })
-        return {
-            r: x,
-            g: y,
-            b: z
-        }
-    } else {
-        h = h - ((4 * PI) / 3)
-        const { x, y, z } = calXYZ({ h, s, i })
-        return {
-            r: z,
-            g: x,
-            b: y
-        }
-    }
+type RGBColor = {
+    r: number
+    g: number
+    b: number
 }
 
-const calXYZ = ({ h, s, i }: HSIColor) => {
-    const newH = parseFloat(h.toFixed(3))
-    let x = i * (1 - s)
-    let y = i * (1 + (s * Math.cos(newH)) / Math.cos(Math.PI / 3 - newH))
-    let z = 3 * i - (x + y)
-    return { x: Number((x * 255).toFixed(0)), y: Number((y * 255).toFixed(0)), z: Number((z * 255).toFixed(0)) }
+export function cvtHSI_RGB(h: number, s: number, i: number): RGBColor  {
+    const hRad = (h * Math.PI) / 180 
+    const iNormalized = i / 255 
+
+    let r = 0, g = 0, b = 0
+
+    if (hRad < (2 * Math.PI) / 3) {
+        r = iNormalized * (1 + s * Math.cos(hRad) / Math.cos(Math.PI / 3 - hRad))
+        b = iNormalized * (1 - s)
+        g = 3 * iNormalized - (r + b)
+    } else if (hRad < (4 * Math.PI) / 3) {
+        const hPrime = hRad - (2 * Math.PI) / 3
+        g = iNormalized * (1 + s * Math.cos(hPrime) / Math.cos(Math.PI / 3 - hPrime))
+        r = iNormalized * (1 - s)
+        b = 3 * iNormalized - (r + g)
+    } else {
+        const hPrime = hRad - (4 * Math.PI) / 3
+        b = iNormalized * (1 + s * Math.cos(hPrime) / Math.cos(Math.PI / 3 - hPrime))
+        g = iNormalized * (1 - s)
+        r = 3 * iNormalized - (g + b)
+    }
+
+    r = Math.min(255, Math.max(0, r * 255))
+    g = Math.min(255, Math.max(0, g * 255))
+    b = Math.min(255, Math.max(0, b * 255))
+
+    return {r: Math.round(r), g: Math.round(g), b: Math.round(b)}
 }

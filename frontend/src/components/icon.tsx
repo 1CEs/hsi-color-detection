@@ -10,3 +10,15 @@ export const MynauiImageSolid: React.FC<IconProps> = ({ ...props }) => {
 export const NotoCrossMark: React.FC<IconProps> = ({ ...props }) =>  {
 	return (<svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 128 128" {...props}><path fill="#c33" d="m58.9 78.6l-41.3 41.9c-1.5 1.5-3.2 2.5-5 3c4.1 1.2 8.6.2 11.8-3l38.2-38.1c.8-.8 2.1-.8 2.8 0l-3.7-3.8c-.7-.8-2-.8-2.8 0m23.4-13.2c-.8-.8-.8-2 0-2.8l38.2-38.1c4.7-4.7 4.7-12.3 0-17s-12.2-4.7-16.9 0L65.4 45.6c-.8.8-2 .8-2.8 0L24.5 7.5c-4.7-4.7-12.3-4.7-17 0c-.4.4-.7.8-1 1.2c.2-.3.4-.5.6-.7c4.7-4.6 10.1-2.5 14.8 2.2l37.6 38.5c.8.8 2 .8 2.8 0l39.3-39.2c4.7-4.7 9.4-5.1 14.1-.4s3.9 9.6-.8 14.3L75.6 62.6c-.8.8-.8 2 0 2.8c0 0 38.1 38.2 38 38.2c4.7 4.7 6.5 10 1.8 14.7s-10.6 3.5-15.3-1.1l3.4 3.4c4.7 4.7 12.3 4.7 17 0s4.7-12.2 0-16.9c0-.1-38.2-38.3-38.2-38.3"></path><path fill="#f44336" d="M115.4 118.3c4.7-4.7 2.9-10-1.8-14.7c.1 0-38-38.2-38-38.2c-.8-.8-.8-2 0-2.8l39.3-39.2c4.7-4.7 5.5-9.6.8-14.3s-9.4-4.3-14.1.4L62.3 48.7c-.8.8-2 .8-2.8 0L21.9 10.2C17.2 5.5 11.8 3.4 7.1 8c-.2.2-.4.4-.6.7c-3.7 4.7-3.3 11.4 1 15.7l38.1 38.2c.8.8.8 2.1 0 2.8L7.5 103.5c-4.7 4.7-4.7 12.3 0 17c1.5 1.5 3.2 2.5 5 3c1.8-.6 3.6-1.6 5-3l41.3-41.9c.8-.8 2.1-.8 2.8 0l3.7 3.8l34.7 34.8c4.8 4.6 10.7 5.8 15.4 1.1"></path><g fill="#fff"><path d="M55 56.4c-1.1-1.6-32.3-33.1-32.3-33.1s-2.3-2.6-4.7-.8c-2.2 1.7-1.1 4.3.1 5.6s29 29.7 30.4 30.9c1.3 1.2 3.9 1.4 5.5.6s1.8-2.1 1-3.2" opacity={0.2}></path><circle cx={12.2} cy={19} r={3.3} opacity={0.2}></circle></g><path fill="#fff" d="M72.1 81.8c1.1 1.6 32.8 32.6 32.8 32.6s2.3 2.6 4.7.7c2.2-1.7 1-4.3-.2-5.6S80 80.2 78.6 79c-1.3-1.2-3.9-1.3-5.5-.5s-1.8 2.2-1 3.3" opacity={0.2}></path></svg>);
 }
+
+export const PepiconsPopLineX: React.FC<IconProps> = (props: SVGProps<SVGSVGElement>) => {
+	return (<svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 20 20" {...props}><path fill="currentColor" fillRule="evenodd" d="M1 10a1 1 0 0 1 1-1h16a1 1 0 1 1 0 2H2a1 1 0 0 1-1-1" clipRule="evenodd"></path></svg>);
+}
+
+export const IconoirArrowRight: React.FC<IconProps> = (props: SVGProps<SVGSVGElement>) => {
+	return (<svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" {...props}><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12h18m0 0l-8.5-8.5M21 12l-8.5 8.5"></path></svg>);
+}
+
+export const FluentArrowDownload20Filled : React.FC<IconProps> = (props: SVGProps<SVGSVGElement>) => {
+	return (<svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 20 20" {...props}><path fill="currentColor" d="M15.245 16.498a.75.75 0 0 1 .101 1.493l-.101.007H4.75a.75.75 0 0 1-.102-1.493l.102-.007zM10.004 2a.75.75 0 0 1 .743.648l.007.102l-.001 10.193l2.966-2.97a.75.75 0 0 1 .977-.074l.084.072a.75.75 0 0 1 .073.977l-.072.084l-4.243 4.25l-.07.063l-.092.059l-.036.021l-.091.038l-.12.03l-.07.008l-.06.002a.7.7 0 0 1-.15-.016l-.082-.023a.7.7 0 0 1-.257-.146l-4.29-4.285a.75.75 0 0 1 .976-1.134l.084.073l2.973 2.967V2.75a.75.75 0 0 1 .75-.75"></path></svg>);
+}
