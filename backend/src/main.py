@@ -6,6 +6,7 @@ import base64
 import cv2
 import numpy as np
 from src.modules.converter import cvt2hsi
+import matplotlib.pyplot as plt
 
 app = FastAPI()
 
@@ -40,7 +41,13 @@ def detect_color_objects(hsi_image, lower_bound, upper_bound):
 
 def overlay_mask_on_image(original_image, mask, highlight_color=(255, 255, 255)):
     highlighted_image = original_image.copy()
+
     highlighted_image[mask > 0] = highlight_color
+    plt.figure(figsize=(20, 5))
+    plt.subplot(1, 4, 1)
+    plt.title("Original Image")
+    plt.imshow(cv2.cvtColor(highlighted_image, cv2.COLOR_BGR2RGB))
+    plt.axis('off')
     return highlighted_image
 
 def image_to_base64(image):
@@ -96,13 +103,10 @@ async def process_image(data: UploadModel):
 
         # Convert other images to Base64
         highlighted_hsi_base64 = image_to_base64((highlighted_hsi[..., 2] * 255).astype(np.uint8))
-        highlighted_image_base64 = image_to_base64(
-            cv2.cvtColor(
-                overlay_mask_on_image(
+        highlighted_image_base64 = image_to_base64(overlay_mask_on_image(
                     image, mask, highlight_color=(
-                        data.oc[0], data.oc[1], data.oc[2]
-                        )), cv2.COLOR_BGR2RGB))
-
+                        data.oc[2], data.oc[1], data.oc[0]
+                        )))
         return {
             "message": "Image processed successfully",
             "images": {

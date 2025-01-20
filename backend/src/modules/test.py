@@ -2,16 +2,27 @@ import base64
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-from converter import cvt2hsi
 import re
+
+# Correct HSI conversion function
+def cvt2hsi(image):
+    image = image.astype('float32') / 255.0
+    B, G, R = cv2.split(image)
+    num = 0.5 * ((R - G) + (R - B))
+    den = np.sqrt((R - G)**2 + (R - B)*(G - B)) + 1e-7
+    theta = np.arccos(num / den)
+    H = np.where(B <= G, theta, 2 * np.pi - theta)
+    H = H / (2 * np.pi)  # Normalize to [0,1]
+    min_rgb = np.minimum(np.minimum(R, G), B)
+    S = 1 - (3 * min_rgb / (R + G + B + 1e-7))
+    I = (R + G + B) / 3
+    hsi_image = cv2.merge((H, S, I))
+    return hsi_image
 
 def decode_base64_image(base64_string):
     try:
-        # Decode the base64 string into bytes
         image_bytes = base64.b64decode(base64_string)
-        # Convert bytes to a NumPy array
         np_array = np.frombuffer(image_bytes, np.uint8)
-        # Decode the NumPy array to an image using OpenCV
         image = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
         return image
     except Exception as e:
@@ -21,16 +32,14 @@ def decode_base64_image(base64_string):
 def detect_color_objects(hsi_image, lower_bound, upper_bound):
     mask = cv2.inRange(hsi_image, np.array(lower_bound, dtype='float32'), np.array(upper_bound, dtype='float32'))
     result = hsi_image.copy()
-    result[mask > 0] = [1, 1, 1]  # Highlight detected regions (optional)
+    result[mask > 0] = [1, 1, 1]
     return mask, result
 
-# Load base64 string from file
 with open("./backend/src/modules/image.txt", "r") as f:
     base64_image = f.read().strip()
 
-# Validate and process base64 string
 if ',' in base64_image:
-    base64_image = base64_image.split(',')[1]  # Remove metadata if present
+    base64_image = base64_image.split(',')[1]
 
 if not re.match(r'^[A-Za-z0-9+/]*={0,2}$', base64_image):
     print("Invalid base64 string format")
@@ -42,35 +51,17 @@ if image is None:
     print("Decoding base64 failed. Exiting.")
     exit()
 
-# Convert the image to HSI
 hsi_image = cvt2hsi(image)
 
-# Define HSI range for object detection
-lower_bound = (0 / 360 , 0.5, 60 / 255)
-upper_bound = (30 / 360, 1.0, 90 / 255)
+lower_bound = (58 / 360, 0.4, 0.4)
+upper_bound = (81 / 360, 1.0, 1.0)
 
-# Detect objects within the specified color range
 mask, highlighted_hsi = detect_color_objects(hsi_image, lower_bound, upper_bound)
-
-# Convert mask to uint8 for visualization
 mask_uint8 = (mask * 255).astype('uint8')
-print(mask_uint8)
-
-# Choose a color to highlight (red in BGR format)
 highlight_color = [0, 0, 255]
-
-# Create a copy of the original image
 highlighted_image = image.copy()
-
-# Apply the highlight color to the original image where mask is non-zero
 highlighted_image[mask > 0] = highlight_color
 
-# **Alternative Approach**: Blend the highlight color with the original image (uncomment to use)
-# alpha = 0.6  # Adjust the value between 0 (fully transparent) and 1 (fully opaque)
-# overlay = np.full(image.shape, highlight_color, dtype=np.uint8)
-# cv2.addWeighted(overlay, alpha, highlighted_image, 1 - alpha, 0, dst=highlighted_image, mask=mask_uint8)
-
-# Visualize the results
 plt.figure(figsize=(20, 5))
 
 plt.subplot(1, 4, 1)
@@ -80,7 +71,7 @@ plt.axis('off')
 
 plt.subplot(1, 4, 2)
 plt.title("Mask")
-plt.imshow(mask_uint8)
+plt.imshow(mask_uint8, cmap="gray")
 plt.axis('off')
 
 plt.subplot(1, 4, 3)
